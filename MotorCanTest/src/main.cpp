@@ -44,43 +44,54 @@ void setup() {
         Serial.println("CAN bus failed!");
     }
 /*-----------------------MOTOR SETUP-----------------------*/
-    // CanFrame setup;
-    // motor1.zeroSet(&setup);
-    // sendCANMessage(&setup);
-    // motor1.enterMode(&setup);
-    // sendCANMessage(&setup);
+    CanFrame setup;
+    motor1.zeroSet(&setup);
+    sendCANMessage(&setup);
+    motor1.enterMode(&setup);
+    sendCANMessage(&setup);
 }
-
+bool setDirection = false;
 void loop() {
     CanFrame loop;
     char rc;  
-    rc = Serial.read();
-    delay(500);
-    if(rc == 'e'){
-        motor1.exitMode(&loop);
+    delay(3000);
+    if(!setDirection){
+        //float p_des, float v_des, float kp, float kd, float t_ff
+        motor1.pack_cmd(&loop,3.14F, 0.0F, 3.0F, 1.0F, 0.0F);
         sendCANMessage(&loop);
-        Serial.println("Exit mode");
+        setDirection = true;
+        delay(100);
+        
     }
-    else if(rc == 's'){
-        motor1.enterMode(&loop);
-        sendCANMessage(&loop);
-        Serial.println("Enter mode");
-    }
-    else if(rc == 'l'){
-        motor1.zeroSet(&loop);
-        sendCANMessage(&loop);
-        Serial.println("Zero set");
-    }
-    else if(rc == 'a'){
-        motor1.pack_cmd(&loop,0.0, 1.0, 0.0F, 0.0F, 0.0F );
-        sendCANMessage(&loop);
-        Serial.println("Command send: a");
-    }
-    else if(rc == 'b'){
-        motor1.pack_cmd(&loop,0, 0.0, 0.0F, 0.0F, 0.0F );
-        sendCANMessage(&loop);
-        Serial.println("Command send: got to 3");
-    }
+   
+    // rc = Serial.read();
+    // delay(500);
+    // if(rc == 'e'){
+    //     motor1.exitMode(&loop);
+    //     sendCANMessage(&loop);
+    //     Serial.println("Exit mode");
+    // }
+    // else if(rc == 's'){
+    //     motor1.enterMode(&loop);
+    //     sendCANMessage(&loop);
+    //     Serial.println("Enter mode");
+    // }
+    // else if(rc == 'l'){
+    //     motor1.zeroSet(&loop);
+    //     sendCANMessage(&loop);
+    //     Serial.println("Zero set");
+    // }
+    // else if(rc == 'a'){
+    //     //float p_des, float v_des, float kp, float kd, float t_ff
+    //     motor1.pack_cmd(&loop,2.0F, 0.0F, 1.0F, 0.0F, 0.0F );
+    //     sendCANMessage(&loop);
+    //     Serial.println("Command send: a");
+    // }
+    // else if(rc == 'b'){
+    //     motor1.pack_cmd(&loop,0.0F, 0.0F, 0.0F, 0.0F, 0.0F );
+    //     sendCANMessage(&loop);
+    //     Serial.println("Command send: got to 3");
+    // }
     
 }
 

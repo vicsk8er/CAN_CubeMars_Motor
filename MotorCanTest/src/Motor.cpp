@@ -50,7 +50,7 @@ void Motor::zeroSet(CanFrame* msg){
     msg->extd = 0;
     msg->ss = 1;
     msg->data_length_code = 8;
-    p_in = 0;
+    
 }
 
 /******************************************************/
@@ -80,10 +80,21 @@ void Motor::pack_cmd(CanFrame* msg, float p_des, float v_des, float kp, float kd
     
     ///limit data to be withing bounds///
     p_des = constrain(p_des, P_MIN, P_MAX); ///fminf(fmaxf(P_MIN, p_in(, P_MAX);
-    v_des = constrain(v_in, V_MIN, V_MAX); ///fminf(fmaxf(V_MIN, v_in(, V_MAX);
-    kp = constrain(kp_in, KP_MIN, KP_MAX); ///fminf(fmaxf(KP_MIN, kp_in(, KP_MAX);
-    kd = constrain(kd_in, KD_MIN, KD_MAX); ///fminf(fmaxf(KD_MIN, kd_in(, KD_MAX);
-    t_ff = constrain(t_in, T_MIN, T_MAX); ///fminf(fmaxf(T_MIN, t_in(, V_MAX);
+    v_des = constrain(v_des, V_MIN, V_MAX); ///fminf(fmaxf(V_MIN, v_in(, V_MAX);
+    kp = constrain(kp, KP_MIN, KP_MAX); ///fminf(fmaxf(KP_MIN, kp_in(, KP_MAX);
+    kd = constrain(kd, KD_MIN, KD_MAX); ///fminf(fmaxf(KD_MIN, kd_in(, KD_MAX);
+    t_ff = constrain(t_ff, T_MIN, T_MAX); ///fminf(fmaxf(T_MIN, t_in(, V_MAX);
+
+    Serial.print("p_des: ");
+    Serial.println(p_des);
+    Serial.print("v_des: ");
+    Serial.println(v_des);
+    Serial.print("kp: ");
+    Serial.println(kp);
+    Serial.print("kd: ");
+    Serial.println(kd);
+    Serial.print("t_ff: ");
+    Serial.println(t_ff);
 
     ///convert floats to unsigned ints///
     unsigned int p_int = float_to_uint(p_des, P_MIN, P_MAX, 16);
@@ -91,6 +102,18 @@ void Motor::pack_cmd(CanFrame* msg, float p_des, float v_des, float kp, float kd
     unsigned int kp_int = float_to_uint(kp, KP_MIN, KP_MAX, 12);
     unsigned int kd_int = float_to_uint(kd, KD_MIN, KD_MAX, 12);
     unsigned int t_int = float_to_uint(t_ff, T_MIN, T_MAX, 12);
+
+    Serial.print("p_int: ");
+    Serial.println(p_int);
+    Serial.print("v_int: ");
+    Serial.println(v_int);
+    Serial.print("kp_int: ");
+    Serial.println(kp_int);
+    Serial.print("kd_int: ");
+    Serial.println(kd_int);
+    Serial.print("t_int: ");
+    Serial.println(t_int);
+    
 
     /// pack ints into the can buffer///
     byte buf[8];
@@ -128,9 +151,7 @@ void Motor::unpack_reply(CanFrame* msg) {
     unsigned int v_int = (msg->data[3] << 4) | (msg->data[4] >> 4);
     unsigned int i_int = ((msg->data[4] & 0xF) << 8) | msg->data[5];
     /// convert uints to floats ///
-    p_out = uint_to_float(p_int, P_MIN, P_MAX, 16);
-    v_out = uint_to_float(v_int, V_MIN, V_MAX, 12);
-    t_out = uint_to_float(i_int, -T_MAX, T_MAX, 12);
+
 }
 
 /******************************************************/
